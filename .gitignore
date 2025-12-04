@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Portable / local tools
+nodejs_portable/
+nodejs_portable_raw.exe
+
+# Env / secrets
+.env
+
+# Mac / Windows junk
+.DS_Store
+Thumbs.db

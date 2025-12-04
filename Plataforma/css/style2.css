@@ -1,0 +1,351 @@
+/* ============================================================
+   style2.css - Versión Optimizada PRO+
+   ============================================================ */
+
+:root {
+  --rojo: #B40000;
+  --rojo-2: #8D0000;
+  --gris-100: #f5f6f8;
+  --blanco: #fff;
+  --texto: #222;
+  --card-shadow: 0 8px 22px rgba(12,20,30,0.06);
+  --accent: #B40000;
+  --inter: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --sidebar-w: 260px;
+  --header-h: 75px;
+  --subnav-h: 52px;
+}
+
+/* RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { 
+  overflow-x: auto;   /* permite scroll horizontal */
+  overflow-y: auto;   /* mantiene scroll vertical normal */
+  height: 100%; 
+
+}
+body {
+  font-family: var(--inter);
+  background: var(--gris-100);
+  color: var(--texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* HEADER */
+.topbar {
+  position: sticky;
+  top: 0; z-index: 2000;
+  background: var(--blanco);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  height: var(--header-h);
+}
+.topbar-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 8px 20px;
+  display: flex; align-items: center; gap: 20px;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo-svg {
+  height: 85px;
+  width: auto;
+  display: block;
+}
+@media (min-resolution: 2dppx) {
+  .logo-svg { height: 70px; }
+}
+.btn-sistema {
+  color: var(--rojo);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: .4px;
+}
+.GeneralDash {
+  color: var(--rojo);
+  justify-content: center;
+}
+/* SUBNAV */
+.subnav {
+  background: linear-gradient(180deg, var(--rojo), var(--rojo-2));
+  padding: 10px 20px;
+  position: sticky;
+  top: var(--header-h);
+  z-index: 1600;
+}
+.subnav-item {
+  background: transparent;
+  color: var(--blanco);
+  padding: 10px 14px;
+  font-weight: 800;
+  font-size: 17px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* MAIN */
+.main-area {
+  display: flex; gap: 18px;
+  padding: 18px;
+  min-height: calc(100vh - var(--header-h) - var(--subnav-h));
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-left: calc(var(--sidebar-w) + 18px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 12px;
+  height: calc(110vh - var(--header-h) - var(--subnav-h));
+  position: fixed;
+  left: 0;
+  top: calc(var(--header-h) + var(--subnav-h));
+  overflow-y: auto;
+  z-index: 1200;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.sidebar.hidden {
+  transform: translateX(-260px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#searchMunicipioSidebar {
+  width: 85%;
+  height: 34px;
+  margin-left: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.municipio-list {
+  margin-top: 10px;
+  list-style: none;
+  padding-left: 15px;
+}
+.municipio-list li {
+  padding: 12px 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  transition: background .15s;
+}
+.municipio-list li:hover {
+  background: rgba(255,255,255,0.12);
+}
+
+/* CONTENT AREA */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+.selected-title {
+  font-size: 20px;
+  margin-bottom: 6px;
+  color: var(--rojo);
+}
+.municipio-title {
+  font-size: 12;
+  color:  #fff;
+  justify-content: center;
+}
+
+
+/* CARDS */
+.card { background: #fff; padding: 18px; border-radius: 10px; box-shadow: var(--card-shadow); }
+.card-form {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* UNIFICACIÓN FINAL card-total */
+.card-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px;
+  border-left: 8px solid var(--accent);
+  font-weight: 700;
+  margin: 0 auto;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+}
+
+/* FORM */
+.card-form label {
+  display: block;
+  font-weight: 700;
+  margin-top: 10px;
+  font-size: 15px;
+}
+.card-form select,
+.card-form input,
+.card-form textarea {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-top: 6px;
+  background: #fff;
+  font-size: 15px;
+}
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.btn-save {
+  background: var(--rojo);
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn-cancel {
+  background: #6b7280;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+/* TABLE */
+.tabla-registros {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+.tabla-registros thead th {
+  position: sticky;
+  top: 0;
+  background: var(--rojo);
+  color: #fff;
+  padding: 10px;
+  text-align: left;
+  font-weight: 800;
+}
+.tabla-registros td {
+  padding: 12px;
+  border-bottom: 1px solid #f6f6f6;
+}
+.tabla-registros tbody tr:hover {
+  background: #fbfbfb;
+}
+
+/* TARJETA AÑO */
+#anio {
+  background: var(--rojo);
+  color: #fff;
+  padding: 28px;
+  border-radius: 14px;
+  width: 48%;
+  max-width: 520px;
+  min-width: 300px;
+  margin: 10vh auto 0 auto;
+  border: 3px solid var(--rojo-2);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+}
+#anio select {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+  background: white;
+  color: var(--rojo);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* TOTAL ACUMULADO */
+#totalAcumulado {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* BUTTONS */
+.btn-edit {
+  background: #777 !important;
+  color: white !important;
+  padding: 6px 12px; border-radius: 6px; border: none;
+}
+.btn-delete {
+  background: #c40000 !important;
+  color: white !important;
+  padding: 6px 12px; border-radius: 6px; border: none;
+}
+
+/* RESPONSIVE */
+@media (max-width:1100px){
+  :root { --sidebar-w: 0px; }
+  .sidebar {
+    transform: translateX(-260px);
+  }
+  .main-area {
+    margin-left: 0;
+    padding: 12px;
+  }
+}
+@media (max-width:760px){
+  #anio { width: 90%; }
+  .tabla-registros { min-width: 700px; }
+}
+
+/* UTILIDADES */
+.hidden { display: none !important; }
+
+/* Dashboard */
+.dashboard-kpis { display: flex; gap: 18px; flex-wrap: wrap; }
+
+.chart-box canvas {
+  max-height: 260px !important;
+}
+/* === CORRECCIÓN: TARJETAS DE TOTALES VERTICALES === */
+
+#totalsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+/* === TARJETAS HORIZONTALES === */
+#totalsContainer {
+    display: flex;
+    flex-direction: row;   /* 🔥 Fuerza distribución horizontal */
+    justify-content: center;
+    align-items: stretch;
+    gap: 20px;
+    margin: 25px auto;
+    width: 100%;
+    max-width: 910px;      /* evita que queden pegadas a los lados */
+}
+
+/* Todas mismo tamaño */
+
+.small-card {
+    width: 220px;              /* 🔥 reduciendo ancho */
+    background: white;
+    border: 3px solid #8B0000;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

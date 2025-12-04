@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema de Indicadores</title>
+
+  <!-- ChartJS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/style2.css" />
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div id="sidebar" class="sidebar hidden" aria-hidden="true">
+  <label class="municipio-title">Municipio</label>
+  <input id="searchMunicipioSidebar" class="search-box" placeholder="Buscar municipio...">
+  <ul id="municipioListSidebar" class="municipio-list"></ul>
+</div>
+
+<!-- HEADER -->
+<header class="topbar topbar-white">
+  <div class="topbar-inner">
+    <div class="brand">
+      <object type="image/svg+xml" data="img/logo_fcgrc.svg" class="logo-svg" aria-label="Logo Fundación"></object>
+      <div class="brand-text">
+        <div id="btnSistema" class="btn-sistema">Reporte GRI Población Participantes</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+  </div>
+</header>
+
+<!-- SUBNAV -->
+<nav id="subNav" class="subnav">
+  <button id="reporteBtn" class="subnav-item">Reporte de Indicadores ▾</button>
+  <button id="dashboardBtn" class="subnav-item hidden">Dashboard</button>
+</nav>
+
+
+<!-- MAIN -->
+<main class="main-area">
+  <section class="content">
+
+    <!-- TARJETA AÑO -->
+    <div class="card card-form" id="anio">
+      <label>Año de reporte</label>
+      <select id="anioReporte">
+        <option value="">Seleccione...</option>
+        <option>2022</option>
+        <option>2023</option>
+        <option>2024</option>
+        <option>2025</option>
+        <option>2026</option>
+        <option>2027</option>
+        <option>2028</option>
+      </select>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="dashboard hidden">
+
+      <h2 class="GeneralDash">Dashboard General</h2>
+
+      <!-- FILTROS -->
+      <div class="filtros-dashboard" style="display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 20px 0;">
+        
+        <!-- Año -->
+        <div class="card" style="padding:12px;min-width:160px;flex:0 0 auto;">
+          <div style="font-weight:800;margin-bottom:8px;color:#333">Año</div>
+          <select id="filtroAnioDashboard">
+            <option value="">Todos</option>
+            <option>2022</option>
+            <option>2023</option>
+            <option>2024</option>
+            <option>2025</option>
+            <option>2026</option>
+            <option>2027</option>
+            <option>2028</option>
+          </select>
+        </div>
+
+        <!-- Municipio -->
+        <div class="card" style="padding:12px;min-width:220px;flex:0 0 auto;">
+          <div style="font-weight:800;margin-bottom:8px;color:#333">Municipio</div>
+          <select id="filtroMunicipioDashboard">
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+        <!-- Población -->
+        <div class="card" style="padding:12px;min-width:180px;flex:0 0 auto;">
+          <div style="font-weight:800;margin-bottom:8px;color:#333">Población</div>
+          <select id="filtroPoblacionDashboard">
+            <option value="">Todas</option>
+            <option value="DIRECTA">Directa</option>
+            <option value="INDIRECTA">Indirecta</option>
+          </select>
+        </div>
+
+        <!-- Sujeto -->
+        <div class="card" style="padding:12px;min-width:260px;flex:0 0 auto;">
+          <div style="font-weight:800;margin-bottom:8px;color:#333">Sujeto de intervención</div>
+          <select id="filtroSujetoDashboard">
+            <option value="">Todos</option>
+          </select>
+        </div>
+
+      </div>
+      <!-- /filtros -->
+
+      <!-- KPIs -->
+      <div class="dashboard-kpis" style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:20px;">
+
+        <!-- 🔥 TARJETA AJUSTADA -->
+        <div class="card" style="flex:1;min-width:180px;text-align:center;padding:18px;">
+          <h3 id="kpiTituloSujeto" style="margin-bottom:8px"></h3>
+          <div id="kpiValorSujeto" style="font-size:28px;font-weight:800">0</div>
+        </div>
+
+        <div class="card" style="flex:1;min-width:140px;text-align:center;padding:18px;">
+          <h3 id="kpiTituloDirecta" style="margin-bottom:8px">Sujeto de intervención Directo</h3>
+          <div id="kpiDirecta" style="font-size:24px;font-weight:800">0</div>
+        </div>
+
+        <div class="card" style="flex:1;min-width:140px;text-align:center;padding:18px;">
+          <h3 id="kpiTituloIndirecta" style="margin-bottom:8px">Sujeto de intervención Indirecto</h3>
+          <div id="kpiIndirecta" style="font-size:24px;font-weight:800">0</div>
+        </div>
+
+        <div class="card" style="flex:1;min-width:140px;text-align:center;padding:18px;">
+          <h3 style="margin-bottom:8px">Total Registros</h3>
+          <div id="kpiRegistros" style="font-size:24px;font-weight:800">0</div>
+        </div>
+
+      </div>
+      <!-- /KPIs -->
+
+      <!-- GRÁFICAS -->
+      <div class="dashboard-charts" style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin-bottom:18px;">
+        <div class="chart-box card" style="flex:1;min-width:260px;max-width:36%;padding:12px;">
+          <h3 style="margin-bottom:8px">Participantes por Estrategia</h3>
+          <canvas id="chartEstrategias"></canvas>
+        </div>
+
+        <div class="chart-box card" style="flex:1;min-width:220px;max-width:32%;padding:12px;">
+          <h3 style="margin-bottom:8px">Directa / Indirecta</h3>
+          <canvas id="chartPoblacion"></canvas>
+        </div>
+
+        <div class="chart-box card" style="flex:1;min-width:220px;max-width:32%;padding:12px;">
+          <h3 style="margin-bottom:8px">Sujeto de intervención</h3>
+          <canvas id="chartSujetos"></canvas>
+        </div>
+      </div>
+
+      <!-- TABLA ESTRATEGIA VS SUJETO -->
+      <div class="card" style="margin-top:6px;padding:14px;">
+        <h3 style="margin-bottom:10px">Totales por Estrategia (según sujeto seleccionado)</h3>
+        <div class="table-wrap" style="overflow:auto;">
+          <table id="tablaEstrategiaSujeto" class="tabla-registros" style="min-width:480px;">
+            <thead>
+              <tr>
+                <th>ESTRATEGIA DE ACOMPAÑAMIENTO</th>
+                <th id="thSujetoTabla">N° según sujeto seleccionado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+    <!-- /DASHBOARD -->
+
+    <!-- FORMULARIO MUNICIPIO -->
+    <div id="formWrap" class="card card-form form-container hidden">
+      <h2 class="selected-title">Municipio seleccionado: <span id="municipioSeleccionado">—</span></h2>
+
+      <h3>Registro de Indicador</h3>
+
+      <label>Población</label>
+      <select id="poblacion">
+        <option value="">Seleccione...</option>
+        <option value="DIRECTA">DIRECTA</option>
+        <option value="INDIRECTA">INDIRECTA</option>
+      </select>
+
+      <label>1. Estrategia de Acompañamiento</label>
+      <select id="estrategia"><option value="">Seleccione...</option></select>
+
+      <label id="labelDespliegue">2. Despliegue de Estrategia (si aplica)</label>
+      <select id="despliegue" class="hidden"></select>
+
+      <label>3. Sujeto de Intervención</label>
+      <select id="sujeto"><option value="">Seleccione...</option></select>
+
+      <label>4. Cantidad</label>
+      <input id="cantidad" type="number" min="1" />
+
+      <label>5. Observaciones</label>
+      <textarea id="observaciones" rows="4"></textarea>
+
+      <div class="form-actions">
+        <button id="guardarBtn" class="btn-save">Guardar Registro</button>
+        <button id="cancelarEdicion" class="btn-cancel hidden">Cancelar edición</button>
+      </div>
+    </div>
+
+    <!-- TOTALES MUNICIPIO -->
+    <div id="totalsContainer" class="totals-container hidden">
+      <div class="card-total small-card">
+        <div class="total-left">Población<br>Directa</div>
+        <div id="totalDirectaPersonas" class="total-right">0</div>
+      </div>
+
+      <div class="card-total small-card">
+        <div class="total-left">Población<br>Indirecta</div>
+        <div id="totalIndirectaPersonas" class="total-right">0</div>
+      </div>
+
+      <div class="card-total small-card">
+        <div class="total-left">Población Total</div>
+        <div id="totalAcumulado" class="total-right">0</div>
+      </div>
+    </div>
+
+    <!-- TABLA MUNICIPIO -->
+    <div id="tableWrap" class="card card-table hidden">
+      <h3>Registros Guardados</h3>
+      <div class="table-wrap">
+        <table id="tablaRegistros" class="tabla-registros">
+          <thead>
+            <tr>
+              <th>AÑO</th>
+              <th>MUNICIPIO</th>
+              <th>SUJETO</th>
+              <th>POBLACIÓN</th>
+              <th>ESTRATEGIA</th>
+              <th>DESPLIEGUE</th>
+              <th>CANTIDAD</th>
+              <th>FECHA</th>
+              <th>ACCIONES</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<script type="module" src="js/app_api2.js"></script>
+<script type="module" src="js/app2.js"></script>
+
+</body>
+</html>

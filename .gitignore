@@ -8,7 +8,7 @@ nodejs_portable_raw.exe
 
 # Env / secrets
 .env
-
+*.log
 # Mac / Windows junk
 .DS_Store
 Thumbs.db

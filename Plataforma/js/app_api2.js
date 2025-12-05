@@ -4,7 +4,7 @@
 //  Compatible 100% con tu backend Express + MongoDB
 // ================================================================
 
-const API_URL = "http://localhost:3000/api/indicadores";
+const API_URL = "https://sistema-de-indicadores.onrender.com/api/indicadores";
 
 // --------------------------------------------------------------
 // Normaliza registro para asegurar fechaCreacion siempre presente

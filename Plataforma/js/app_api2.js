@@ -1,14 +1,12 @@
-// ================================================================
-//  app_api2.js  (versión PRO FINAL)
+
+//  app_api2.js 
 //  Wrapper de API con fallback automático a localStorage
-//  Compatible 100% con tu backend Express + MongoDB
-// ================================================================
+//  Compatible 100% con  backend Express + MongoDB
 
 const API_URL = "https://sistema-de-indicadores.onrender.com/api/indicadores";
 
-// --------------------------------------------------------------
 // Normaliza registro para asegurar fechaCreacion siempre presente
-// --------------------------------------------------------------
+
 function normalizeRecord(r) {
   return {
     ...r,
@@ -16,9 +14,7 @@ function normalizeRecord(r) {
   };
 }
 
-// --------------------------------------------------------------
 // FETCH SEGURO CON FALLBACK
-// --------------------------------------------------------------
 async function safeFetch(endpoint = "", method = "GET", body = null) {
   const headers = { "Content-Type": "application/json" };
   const config = { method, headers };
@@ -31,13 +27,12 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
 
     const data = await resp.json();
 
-    // ----------------------------------------------------------
+
     // El backend a veces retorna:
     //   { data: [...] }
     // Otras veces retorna directamente:
     //   [ ... ]
     // Ambas opciones se normalizan aquí.
-    // ----------------------------------------------------------
 
     if (Array.isArray(data)) {
       return { data: data.map(normalizeRecord) };
@@ -56,18 +51,17 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
 
     const LS_KEY = "indicadores_local";
 
-    // ----------------------------------------------------------
-    // GET → leer localStorage
-    // ----------------------------------------------------------
+        // GET → leer localStorage
+    
     if (method === "GET") {
       const raw = localStorage.getItem(LS_KEY);
       const list = raw ? JSON.parse(raw) : [];
       return { data: list.map(normalizeRecord) };
     }
 
-    // ----------------------------------------------------------
+    
     // POST → crear nuevo registro local
-    // ----------------------------------------------------------
+    
     if (method === "POST") {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
 
@@ -82,9 +76,9 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
       return { data: nuevo };
     }
 
-    // ----------------------------------------------------------
+    
     // PUT → actualizar registro local
-    // ----------------------------------------------------------
+    
     if (method === "PUT") {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
       const id = endpoint.replace(/\//g, "");
@@ -102,9 +96,8 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
       throw new Error("Registro no encontrado en localStorage");
     }
 
-    // ----------------------------------------------------------
     // DELETE → eliminar registro local
-    // ----------------------------------------------------------
+    
     if (method === "DELETE") {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
       const id = endpoint.replace(/\//g, "");
@@ -117,9 +110,9 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
   }
 }
 
-// --------------------------------------------------------------
+
 // EXPORTS SIMPLIFICADOS
-// --------------------------------------------------------------
+
 export async function apiListarRegistros() {
   const res = await safeFetch("", "GET");
   return res.data;

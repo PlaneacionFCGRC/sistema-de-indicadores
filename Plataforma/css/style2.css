@@ -230,7 +230,12 @@ body {
 .tabla-registros {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 100%;     /* se adapta al zoom */
+  table-layout: auto;  /* permite ajuste automático */
+}
+.table-wrap{
+  overflow-x: auto;      /* permite scroll cuando es necesario */
+  width: 100%;
 }
 .tabla-registros thead th {
   position: sticky;
@@ -348,4 +353,161 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+/* Contenedor del tooltip */
+.tooltip {
+  position: relative;
+}
+
+/* Texto del tooltip */
+.tooltip .tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  width: 230px;
+  background-color: #700;
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+
+  position: absolute;
+  bottom: 110%; /* aparece arriba de la tarjeta */
+  left: 50%;
+  transform: translateX(-50%);
+
+  transition: opacity 0.25s ease;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* Flechita */
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #700 transparent transparent transparent;
+}
+
+/* Mostrar tooltip al pasar el mouse */
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+body {
+    overflow-x: hidden;
+}
+/* === BOTONES DE INICIO (GRANDES, ROJOS, ELEGANTES) === */
+
+.inicio-container {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin-top: 50px;
+  flex-wrap: wrap;
+}
+
+.inicio-card {
+  padding: 45px;
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  width: 420px;
+  display: flex;
+  justify-content: center;
+}
+
+.inicio-btn {
+  width: 100%;
+  padding: 28px 40px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--rojo);
+  background: #fff;
+  border: 3px solid var(--rojo);
+  border-radius: 14px;
+  cursor: pointer;
+  justify-content: center;
+  transition: 0.25s ease;
+}
+
+.inicio-btn:hover {
+  background: var(--rojo);
+  color: #fff;
+  transform: translateY(-3px);
+  justify-content: center;
+}
+/* === AGRANDAR Y CENTRAR GRÁFICOS DE MANERA AUTORRESPONSIVA === */
+
+.chart-responsive {
+  flex: 1 1 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* ✔ Centra el contenido */
+  justify-content: center;
+  padding: 16px;
+}
+
+.chart-responsive canvas {
+  width: 100% !important;   /* ✔ Se adapta al zoom */
+  max-width: 600px;         /* ✔ Tamaño óptimo centrado */
+  height: auto !important;  /* ✔ Evita estiramiento extraño */
+  margin: 0 auto;
+}
+/* === TOOLTIP PARA TÍTULO GRI === */
+.tooltip-gri {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+/* Caja del tooltip */
+.tooltip-gri-text {
+    visibility: hidden;
+    opacity: 0;
+    width: 360px;
+    background-color: #700;
+    color: #fff;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+
+    /* posición */
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(105%);
+    z-index: 999;
+
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+/* Flechita */
+.tooltip-gri-text::after {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent #700 transparent;
+}
+
+/* Mostrar tooltip al pasar el mouse */
+.tooltip-gri:hover .tooltip-gri-text,
+.tooltip-gri:active .tooltip-gri-text {
+    visibility: visible;
+    opacity: 1;
+}
+h1{ font-size:xx-large;
+    text-align: center;
+    color:#B40000
 }

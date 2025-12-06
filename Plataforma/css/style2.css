@@ -85,12 +85,73 @@ body {
 
 /* MAIN */
 .main-area {
-  display: flex; gap: 18px;
+  display: flex; 
+  gap: 18px;
   padding: 18px;
   min-height: calc(100vh - var(--header-h) - var(--subnav-h));
-  max-width: 1200px;
   margin: 0 auto;
-  margin-left: calc(var(--sidebar-w) + 18px);
+  width: 100%;         
+}
+.main-area.with-sidebar { 
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+}
+#kpiTituloSujeto {
+  color: #B40000;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+}
+#kpiTituloDirecta{
+  color: #B40000;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+}
+#kpiTituloIndirecta{
+  color: #B40000;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+
+}
+#SelectedMunicipio{
+  font-size: 20px;
+  font-weight: 800;
+  color: #B40000;
+  text-align: center;
+  justify-content: center;
+}
+#titulo_form{
+  font-size: 16px;
+  font-weight: 600;
+  color: #B40000;
+  text-align: center;
+  justify-content: center;
+}
+#municipioSeleccionado{
+  font-size: 20px;
+  font-weight: 800;
+  color: #B40000;;
+  text-align: center;
+  justify-content: center;
+}
+#kpiRegistros{
+  color:#141313;
+  justify-content: center;
+  text-align: center
+
+}
+#kpiTituloRegistros{
+  color: #B40000;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 800;
+}
+.DIRECTAS {
+
+  font-size: 20px;
+  font-weight: 800;
 }
 
 /* SIDEBAR */
@@ -149,27 +210,41 @@ body {
   flex-direction: column;
   gap: 18px;
   min-width: 0;
+  width: 100%;
+  margin: 0 auto;         /* ✅ Centrado en el espacio disponible */
+  padding: 0 20px;        /* ✅ Respiro en los lados */
 }
 .selected-title {
   font-size: 20px;
   margin-bottom: 6px;
   color: var(--rojo);
+  justify-content: center;
 }
 .municipio-title {
   font-size: 12;
   color:  #fff;
   justify-content: center;
 }
+.municipioSeleccionado {
+  font-size: 12;
+  color:  #B40000;
+  text-align: center;
+  justify-content: center;
+}
+
 
 
 /* CARDS */
-.card { background: #fff; padding: 18px; border-radius: 10px; box-shadow: var(--card-shadow); }
+.card { background: #fff; 
+  padding: 18px; 
+  border-radius: 10px; 
+  box-shadow: var(--card-shadow); }
 .card-form {
-  max-width: 900px;
   width: 100%;
   margin: 0 auto;
   padding: 24px;
 }
+
 
 /* UNIFICACIÓN FINAL card-total */
 .card-total {
@@ -180,7 +255,7 @@ body {
   border-left: 8px solid var(--accent);
   font-weight: 700;
   margin: 0 auto;
-  max-width: 900px;
+  max-width: 100%;
   background: #fff;
   border-radius: 12px;
   box-shadow: var(--card-shadow);
@@ -227,14 +302,22 @@ body {
 }
 
 /* TABLE */
+
 .tabla-registros {
   width: 100%;
   border-collapse: collapse;
-  min-width: 100%;     /* se adapta al zoom */
-  table-layout: auto;  /* permite ajuste automático */
+  min-width: 900px;
+  table-layout: auto;
 }
-.table-wrap{
-  overflow-x: auto;      /* permite scroll cuando es necesario */
+#tableWrap {
+  width: 100%;
+  padding: 18px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+}
+.table-wrap {
+  overflow-x: auto;
   width: 100%;
 }
 .tabla-registros thead th {
@@ -304,13 +387,21 @@ body {
     transform: translateX(-260px);
   }
   .main-area {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  .main-area.with-sidebar {
     margin-left: 0;
-    padding: 12px;
+    width: 100%;
+  }
+  .content {
+    padding: 0 12px;
   }
 }
 @media (max-width:760px){
   #anio { width: 90%; }
-  .tabla-registros { min-width: 700px; }
+  .tabla-registros { 
+    min-width: 700px; }
 }
 
 /* UTILIDADES */
@@ -324,35 +415,31 @@ body {
 }
 /* === CORRECCIÓN: TARJETAS DE TOTALES VERTICALES === */
 
-#totalsContainer {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
-}
+
 /* === TARJETAS HORIZONTALES === */
 #totalsContainer {
-    display: flex;
-    flex-direction: row;   /* 🔥 Fuerza distribución horizontal */
-    justify-content: center;
-    align-items: stretch;
-    gap: 20px;
-    margin: 25px auto;
-    width: 100%;
-    max-width: 910px;      /* evita que queden pegadas a los lados */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  margin: 25px auto;
+  width: 100%;
 }
 
 /* Todas mismo tamaño */
 
 .small-card {
-    width: 220px;              /* 🔥 reduciendo ancho */
-    background: white;
-    border: 3px solid #8B0000;
-    border-radius: 14px;
-    padding: 16px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  flex: 1;
+  min-width: 180px;       /* ✅ Más flexible */
+  max-width: 250px;
+  background: white;
+  border: 3px solid #8B0000;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 /* Contenedor del tooltip */
 .tooltip {
@@ -404,7 +491,7 @@ body {
 /* === BOTONES DE INICIO (GRANDES, ROJOS, ELEGANTES) === */
 
 .inicio-container {
-  display: flex;
+  display: 50px;
   gap: 40px;
   justify-content: center;
   margin-top: 50px;
@@ -415,8 +502,9 @@ body {
   padding: 45px;
   border-radius: 18px;
   box-shadow: var(--card-shadow);
-  width: 420px;
-  display: flex;
+  width: 480px;
+  height: 260px;
+  display: 60px;
   justify-content: center;
 }
 
@@ -510,4 +598,111 @@ body {
 h1{ font-size:xx-large;
     text-align: center;
     color:#B40000
+}
+h3{ font-size:larger;
+    text-align: left;
+    color:#B40000
+}
+/* =====================================================
+   1) BOTONES DE INICIO – CENTRADOS Y RESPONSIVE
+===================================================== */
+
+.inicio-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin: 50px auto;           /* ✅ Auto centra el contenedor */
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;           /* ✅ Limita el ancho total */
+  padding: 0 40px;
+}
+
+.inicio-card {
+  padding: 45px;
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  width: 420px;             /* ✅ Mismo ancho para ambos */
+  max-width: 420px;         /* ✅ Mismo ancho máximo */
+  min-width: 380px;         /* ✅ Mismo ancho mínimo */
+  display: flex;
+  justify-content: center;
+
+}
+
+.inicio-btn {
+  width: 100%;
+  padding: 28px 40px;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--rojo);
+  background: #fff;
+  border: 3px solid var(--rojo);  /* ✅ Mismo grosor de borde */
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: center;              /* ✅ Texto centrado */
+  transition: 0.25s ease;
+  box-sizing: border-box; 
+}
+.inicio-btn:hover {
+  background: var(--rojo);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+
+/* =====================================================
+   2) SIDEBAR MÓVIL → VERSIÓN HORIZONTAL TIPO APP
+===================================================== */
+
+@media (max-width: 768px) {
+
+  #sidebar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: auto;
+    background: #b30000;
+    z-index: 9999;
+    padding: 10px;
+  }
+
+  #municipioListSidebar {
+    display: none;
+    max-height: 50vh;
+    overflow-y: auto;
+    margin-top: 10px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  #searchMunicipioSidebar {
+    display: none;
+    margin-top: 8px;
+  }
+
+  .municipio-title {
+    color: white;
+    font-weight: bold;
+  }
+
+  #hamburgerBtn {
+    display: block;
+    background: white;
+    border: none;
+    font-size: 22px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+}
+
+@media (min-width: 769px) {
+  #hamburgerBtn {
+    display: none !important;
+  }
 }

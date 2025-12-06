@@ -3,7 +3,6 @@ import {
   apiListarRegistros,
   apiGuardarRegistro,
   apiEditarRegistro,
-  apiEliminarRegistro
 } from "./app_api2.js";
 
 /* ---------------------------
@@ -134,8 +133,11 @@ function hideAllViews() {
   sidebar.classList.add("hidden");
   subNav.classList.add("hidden");
   dashboard.classList.add("hidden");
+
   // dashboard button hidden on startup
   dashboardBtn.classList.add("hidden");
+  document.querySelector('.main-area').classList.remove('with-sidebar');
+
 }
 
 btnResultados.addEventListener("click", () => {
@@ -151,6 +153,10 @@ btnResultados.addEventListener("click", () => {
   subNav.classList.add("hidden");
 
   dashboardBtn.classList.remove("hidden");
+  
+  // ✅ AGREGAR: Quitar with-sidebar para que dashboard esté centrado
+  document.querySelector('.main-area').classList.remove('with-sidebar');
+  
   updateDashboard(); // render charts with current data
 });
 
@@ -160,10 +166,7 @@ btnReporteInfo.addEventListener("click", () => {
   subNav.classList.remove("hidden");
   sidebar.classList.remove("hidden");
 
-  // show form area
-  formWrap.classList.remove("hidden");
-  tableWrap.classList.remove("hidden");
-  totalsContainer.classList.remove("hidden");
+  // ❌ NO mostrar form/tabla/totales hasta seleccionar municipio
 
   // dashboard button should be hidden on report info
   dashboardBtn.classList.add("hidden");
@@ -179,6 +182,10 @@ dashboardBtn.addEventListener("click", () => {
 
   dashboard.classList.remove("hidden");
   dashboardBtn.classList.remove("hidden");
+  
+  // ✅ AGREGAR: Quitar with-sidebar para centrar dashboard
+  document.querySelector('.main-area').classList.remove('with-sidebar');
+  
   updateDashboard();
 });
 
@@ -192,6 +199,11 @@ btnVolverFormulario.addEventListener("click", () => {
   totalsContainer.classList.remove("hidden");
 
   dashboardBtn.classList.add("hidden");
+  
+  // ✅ AGREGAR: Mantener with-sidebar si había municipio seleccionado
+  if (municipioSeleccionadoEl.textContent.trim() !== "—") {
+    document.querySelector('.main-area').classList.add('with-sidebar');
+  }
 });
 
 /* ---------------------------
@@ -213,6 +225,9 @@ function seleccionarMunicipio(nombre) {
   formWrap.classList.remove("hidden");
   tableWrap.classList.remove("hidden");
   totalsContainer.classList.remove("hidden");
+  
+  // ✅ SOLO AQUÍ se agrega with-sidebar (cuando ya seleccionó municipio)
+  document.querySelector('.main-area').classList.add('with-sidebar');
 
   // render tabla con filtrado por municipio seleccionado
   renderTabla();
@@ -276,6 +291,10 @@ anioReporteEl.addEventListener("change", validateFormForConsolidado);
 cantidadEl.addEventListener("input", validateFormForConsolidado);
 
 function isFormMandatoryComplete() {
+  // Permitir ver consolidado si ya existe al menos un registro
+  if (registros.length > 0) return true;
+
+  // Si no hay registros, validar el formulario
   const anio = anioReporteEl.value;
   const muni = municipioSeleccionadoEl.textContent.trim();
   const poblacion = poblacionEl.value;
@@ -327,7 +346,6 @@ function renderTabla() {
       <td>${fecha}</td>
       <td>
         <button class="btn-edit" data-id="${reg._id}">Editar</button>
-        <button class="btn-delete" data-id="${reg._id}">Eliminar</button>
       </td>
     `;
     tablaBody.appendChild(tr);
@@ -461,6 +479,9 @@ btnConsolidado.addEventListener("click", () => {
 
   dashboard.classList.remove("hidden");
   dashboardBtn.classList.remove("hidden");
+
+  // ✅ AGREGAR: Quitar with-sidebar para centrar dashboard
+  document.querySelector('.main-area').classList.remove('with-sidebar');
 
   // apply dashboard filters: set filters to the form values (so charts reflect what user just filled)
   filtroAnioDashboard.value = anioReporteEl.value || "";
@@ -695,4 +716,21 @@ function populateFilterYears() {
   filtroAnioDashboard.innerHTML = `<option value="">Todos</option>` + arr.map(y=>`<option>${y}</option>`).join("");
 }
 
-initLoad();
+document.addEventListener("DOMContentLoaded", initLoad);
+
+/* =====================================================
+   HAMBURGUESA – MOBILE MENU
+===================================================== */
+
+const hamburgerBtn = document.getElementById("hamburgerBtn");
+const listaSidebar = document.getElementById("municipioListSidebar");
+const buscadorSidebar = document.getElementById("searchMunicipioSidebar");
+
+if (hamburgerBtn) {
+  hamburgerBtn.addEventListener("click", () => {
+    const isVisible = listaSidebar.style.display === "block";
+
+    listaSidebar.style.display = isVisible ? "none" : "block";
+    buscadorSidebar.style.display = isVisible ? "none" : "block";
+  });
+}

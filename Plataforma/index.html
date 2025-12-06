@@ -12,12 +12,19 @@
   <link rel="stylesheet" href="css/style2.css" />
 </head>
 
-<body>
+<body class="inicio-activo">
 
 <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <div id="sidebar" class="sidebar hidden" aria-hidden="true">
+
+  <!-- Botón hamburguesa (solo móvil) -->
+  <button id="hamburgerBtn">☰ Menú</button>
+
   <label class="municipio-title"></label>
+
   <input id="searchMunicipioSidebar" class="search-box" placeholder="Buscar municipio...">
+
   <ul id="municipioListSidebar" class="municipio-list"></ul>
 </div>
 
@@ -52,13 +59,15 @@
 
     <!-- PANTALLA INICIO -->
     <div id="inicioPantalla" class="inicio-container">
-      <div class="inicio-card">
-        <button id="btnResultados" class="inicio-btn">Resultados</button>
+            <div class="inicio-card">
+        <button id="btnReporteInfo" class="inicio-btn">Reporte de Información</button>
       </div>
 
       <div class="inicio-card">
-        <button id="btnReporteInfo" class="inicio-btn">Reporte de Información</button>
+        <button id="btnResultados" class="inicio-btn">Consolidado</button>
       </div>
+
+
     </div>
 
     <!-- DASHBOARD -->
@@ -130,7 +139,7 @@
         </div>
 
         <div class="card" style="flex:1;min-width:140px;text-align:center;padding:18px;">
-          <h3 style="margin-bottom:8px">Total Registros</h3>
+          <h3 id="kpiTituloRegistros" style="margin-bottom:8px">Total Registros</h3>
           <div id="kpiRegistros" style="font-size:24px;font-weight:800">0</div>
         </div>
 
@@ -185,9 +194,9 @@
 
     <!-- FORMULARIO MUNICIPIO -->
     <div id="formWrap" class="card card-form form-container hidden">
-      <h2 class="selected-title">Municipio seleccionado: <span id="municipioSeleccionado">—</span></h2>
+      <h2 class="selected-title" id="SelectedMunicipio">Municipio seleccionado: <span id="municipioSeleccionado">—</span></h2>
 
-      <h3>Registro de Indicador</h3>
+      <h3 id="titulo_form">Por favor registre la información en el siguiente formulario.</h3>
 
       <label>Año de reporte</label>
       <select id="anioReporte">

@@ -1,12 +1,10 @@
+//  app_api2.js  (VERSIÓN CORREGIDA Y MEJORADA)
+//  Backend Render + fallback localStorage SIN PERDER registros.
 
-//  app_api2.js 
-//  Wrapper de API con fallback automático a localStorage
-//  Compatible 100% con  backend Express + MongoDB
-
+// URL del backend Render
 const API_URL = "https://sistema-de-indicadores.onrender.com/api/indicadores";
 
-// Normaliza registro para asegurar fechaCreacion siempre presente
-
+// Normaliza para asegurarnos que siempre haya fecha
 function normalizeRecord(r) {
   return {
     ...r,
@@ -14,7 +12,12 @@ function normalizeRecord(r) {
   };
 }
 
+// KEY del localStorage
+const LS_KEY = "indicadores_local";
+
+// -----------------------------------------------------
 // FETCH SEGURO CON FALLBACK
+// -----------------------------------------------------
 async function safeFetch(endpoint = "", method = "GET", body = null) {
   const headers = { "Content-Type": "application/json" };
   const config = { method, headers };
@@ -27,41 +30,36 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
 
     const data = await resp.json();
 
+    let registrosNormalizados = [];
 
-    // El backend a veces retorna:
-    //   { data: [...] }
-    // Otras veces retorna directamente:
-    //   [ ... ]
-    // Ambas opciones se normalizan aquí.
-
+    // Normaliza backend: {data: [...] } o [...]
     if (Array.isArray(data)) {
-      return { data: data.map(normalizeRecord) };
+      registrosNormalizados = data.map(normalizeRecord);
+    } else if (data?.data) {
+      registrosNormalizados = Array.isArray(data.data)
+        ? data.data.map(normalizeRecord)
+        : [normalizeRecord(data.data)];
+    } else {
+      registrosNormalizados = [normalizeRecord(data)];
     }
 
-    if (data && typeof data === "object" && "data" in data) {
-      if (Array.isArray(data.data)) {
-        return { data: data.data.map(normalizeRecord) };
-      }
-      return { data: normalizeRecord(data.data) };
+    // ⭐ SINCRONIZA localStorage con MongoDB
+    if (method === "GET") {
+      localStorage.setItem(LS_KEY, JSON.stringify(registrosNormalizados));
     }
 
-    return { data };
+    return { data: registrosNormalizados };
   } catch (err) {
-    console.warn("⚠ API NO DISPONIBLE → usando localStorage:", err.message);
+    console.warn("⚠ Backend NO disponible → usando localStorage");
 
-    const LS_KEY = "indicadores_local";
-
-        // GET → leer localStorage
-    
+    // ---------- GET ----------
     if (method === "GET") {
       const raw = localStorage.getItem(LS_KEY);
       const list = raw ? JSON.parse(raw) : [];
       return { data: list.map(normalizeRecord) };
     }
 
-    
-    // POST → crear nuevo registro local
-    
+    // ---------- POST ----------
     if (method === "POST") {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
 
@@ -76,43 +74,36 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
       return { data: nuevo };
     }
 
-    
-    // PUT → actualizar registro local
-    
+    // ---------- PUT ----------
     if (method === "PUT") {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
       const id = endpoint.replace(/\//g, "");
 
-      const idx = list.findIndex(i => i._id === id);
+      const idx = list.findIndex(r => r._id === id);
       if (idx >= 0) {
-        list[idx] = normalizeRecord({
-          ...list[idx],
-          ...body
-        });
+        list[idx] = normalizeRecord({ ...list[idx], ...body });
         localStorage.setItem(LS_KEY, JSON.stringify(list));
         return { data: list[idx] };
       }
-
       throw new Error("Registro no encontrado en localStorage");
     }
 
-    // DELETE → eliminar registro local
-    
+    // ---------- DELETE ----------
     if (method === "DELETE") {
       const list = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
       const id = endpoint.replace(/\//g, "");
 
-      const filtered = list.filter(i => i._id !== id);
-      localStorage.setItem(LS_KEY, JSON.stringify(filtered));
+      const newList = list.filter(r => r._id !== id);
+      localStorage.setItem(LS_KEY, JSON.stringify(newList));
 
       return { data: { ok: true } };
     }
   }
 }
 
-
-// EXPORTS SIMPLIFICADOS
-
+// -----------------------------------------------------
+// EXPORTS
+// -----------------------------------------------------
 export async function apiListarRegistros() {
   const res = await safeFetch("", "GET");
   return res.data;

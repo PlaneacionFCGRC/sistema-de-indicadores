@@ -738,7 +738,7 @@ function populateFilterYears() {
 document.addEventListener("DOMContentLoaded", initLoad);
 
 /* =====================================================
-   HAMBURGUESA – MOBILE MENU
+   HAMBURGUESA – MOBILE MENU (MEJORADO)
 ===================================================== */
 
 const hamburgerBtn = document.getElementById("hamburgerBtn");
@@ -746,10 +746,19 @@ const listaSidebar = document.getElementById("municipioListSidebar");
 const buscadorSidebar = document.getElementById("searchMunicipioSidebar");
 
 if (hamburgerBtn) {
+  // Inicializar texto del botón
+  hamburgerBtn.textContent = "🔍 Buscar";
+  
   hamburgerBtn.addEventListener("click", () => {
-    const isVisible = listaSidebar.style.display === "block";
+    const isVisible = buscadorSidebar.style.display === "block";
 
-    listaSidebar.style.display = isVisible ? "none" : "block";
-    buscadorSidebar.style.display = isVisible ? "none" : "block";
+    if (isVisible) {
+      buscadorSidebar.style.display = "none";
+      hamburgerBtn.textContent = "🔍 Buscar";
+    } else {
+      buscadorSidebar.style.display = "block";
+      hamburgerBtn.textContent = "❌ Cerrar";
+      buscadorSidebar.focus();
+    }
   });
 }

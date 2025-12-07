@@ -116,7 +116,6 @@ function initUI() {
   // dashboard filters: populate municipios & sujetos list
   filtroMunicipioDashboard.innerHTML = `<option value="">Todos</option>` + municipios.map(m => `<option>${m}</option>`).join("");
   filtroSujetoDashboard.innerHTML = `<option value="">Todos</option>` + sujetos.map(s => `<option>${s}</option>`).join("");
-  // ensure filtroMunicipioDashboard also receives updates if municipios change (static here).
 
   hideAllViews();
 }
@@ -137,7 +136,6 @@ function hideAllViews() {
   // dashboard button hidden on startup
   dashboardBtn.classList.add("hidden");
   document.querySelector('.main-area').classList.remove('with-sidebar');
-
 }
 
 btnResultados.addEventListener("click", () => {
@@ -154,23 +152,45 @@ btnResultados.addEventListener("click", () => {
 
   dashboardBtn.classList.remove("hidden");
   
-  // ✅ AGREGAR: Quitar with-sidebar para que dashboard esté centrado
   document.querySelector('.main-area').classList.remove('with-sidebar');
   
-  updateDashboard(); // render charts with current data
+  updateDashboard();
 });
 
+// ✅ MODIFICADO: Mostrar formulario directo al hacer clic en "Reporte de Información"
 btnReporteInfo.addEventListener("click", () => {
   inicioPantalla.classList.add("hidden");
-
-  subNav.classList.remove("hidden");
-  sidebar.classList.remove("hidden");
-
-  // ❌ NO mostrar form/tabla/totales hasta seleccionar municipio
-
-  // dashboard button should be hidden on report info
-  dashboardBtn.classList.add("hidden");
   dashboard.classList.add("hidden");
+
+  // Mostrar sidebar, formulario y tabla directamente
+  sidebar.classList.remove("hidden");
+  subNav.classList.remove("hidden");
+  formWrap.classList.remove("hidden");
+  tableWrap.classList.remove("hidden");
+  totalsContainer.classList.remove("hidden");
+
+  // Agregar clase with-sidebar para que se vea correctamente
+  document.querySelector('.main-area').classList.add('with-sidebar');
+
+  // MOBILE FIX: Asegurar que todo sea visible en móvil
+  if (window.innerWidth <= 768) {
+    // Remover with-sidebar en móvil
+    document.querySelector('.main-area').classList.remove('with-sidebar');
+    
+    // Forzar visibilidad
+    formWrap.style.display = 'block';
+    tableWrap.style.display = 'block';
+    totalsContainer.style.display = 'flex';
+    
+    // Asegurar que el sidebar esté en posición correcta
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = 'calc(var(--header-h) + var(--subnav-h))';
+  }
+
+  dashboardBtn.classList.add("hidden");
+  
+  // Renderizar tabla con todos los registros (sin filtro de municipio)
+  renderTabla();
 });
 
 dashboardBtn.addEventListener("click", () => {
@@ -183,15 +203,16 @@ dashboardBtn.addEventListener("click", () => {
   dashboard.classList.remove("hidden");
   dashboardBtn.classList.remove("hidden");
   
-  // ✅ AGREGAR: Quitar with-sidebar para centrar dashboard
   document.querySelector('.main-area').classList.remove('with-sidebar');
   
   updateDashboard();
 });
 
+// ✅ MODIFICADO: Volver al formulario con todo visible
 btnVolverFormulario.addEventListener("click", () => {
-  // go back to formulario with sidebar visible
   dashboard.classList.add("hidden");
+  
+  // Mostrar todo: sidebar, formulario y tabla
   subNav.classList.remove("hidden");
   sidebar.classList.remove("hidden");
   formWrap.classList.remove("hidden");
@@ -200,10 +221,10 @@ btnVolverFormulario.addEventListener("click", () => {
 
   dashboardBtn.classList.add("hidden");
   
-  // ✅ AGREGAR: Mantener with-sidebar si había municipio seleccionado
-  if (municipioSeleccionadoEl.textContent.trim() !== "—") {
-    document.querySelector('.main-area').classList.add('with-sidebar');
-  }
+  document.querySelector('.main-area').classList.add('with-sidebar');
+  
+  // Renderizar tabla con el filtro actual (si hay municipio seleccionado)
+  renderTabla();
 });
 
 /* ---------------------------
@@ -226,7 +247,6 @@ function seleccionarMunicipio(nombre) {
   tableWrap.classList.remove("hidden");
   totalsContainer.classList.remove("hidden");
   
-  // ✅ SOLO AQUÍ se agrega with-sidebar (cuando ya seleccionó municipio)
   document.querySelector('.main-area').classList.add('with-sidebar');
 
   // render tabla con filtrado por municipio seleccionado
@@ -246,7 +266,6 @@ searchMunicipioSidebar.addEventListener("input", function () {
 ----------------------------*/
 poblacionEl.addEventListener("change", () => {
   if (poblacionEl.value === "INDIRECTA") {
-
     estrategiaEl.innerHTML = `
       <option value="">Seleccione...</option>
       <option>DONACIONES (PIÑA, MERCADOS, ETC)</option>
@@ -257,17 +276,13 @@ poblacionEl.addEventListener("change", () => {
 
     despliegueEl.classList.add("hidden");
     despliegueEl.innerHTML = "";
-
   } else {
-
     estrategiaEl.innerHTML =
       `<option value="">Seleccione...</option>` +
       estrategiasDefault.map(e => `<option>${e}</option>`).join("");
 
     estrategiaEl.dispatchEvent(new Event("change"));
   }
-
-  //validateFormForConsolidado();
 });
 
 estrategiaEl.addEventListener("change", () => {
@@ -302,7 +317,7 @@ function isFormMandatoryComplete() {
   const estrategia = estrategiaEl.value;
   const cantidad = Number(cantidadEl.value) || 0;
 
-  return anio && muni && poblacion && sujeto && estrategia && cantidad > 0;
+  return anio && muni && muni !== "—" && poblacion && sujeto && estrategia && cantidad > 0;
 }
 
 function validateFormForConsolidado() {
@@ -316,7 +331,6 @@ function validateFormForConsolidado() {
 async function cargarRegistros() {
   const res = await apiListarRegistros();
   registros = Array.isArray(res) ? res : [];
-  // update dashboard filters and tabla displays
   renderTabla();
   updateDashboard();
 }
@@ -354,12 +368,10 @@ function renderTabla() {
   tablaBody.querySelectorAll(".btn-edit").forEach(b => b.addEventListener("click", onEditar));
   tablaBody.querySelectorAll(".btn-delete").forEach(b => b.addEventListener("click", onEliminar));
 
-  // actualizar totales del municipio mostrado (o total)
   actualizarTotales(filtrados);
 }
 
 function actualizarTotales(filtrados) {
-  // TOTAL ACUMULADO = DIRECTA + INDIRECTA SOLO SI sujeto = PERSONAS PARTICIPANTES
   const total = filtrados
     .filter(r => r.sujeto === "PERSONAS PARTICIPANTES")
     .reduce((acc, r) => acc + (Number(r.cantidad) || 0), 0);
@@ -416,9 +428,16 @@ async function onEliminar(e) {
 
 /* GUARDAR */
 guardarBtn.addEventListener("click", async () => {
+  const municipio = municipioSeleccionadoEl.textContent.trim();
+  
+  // Validar que se haya seleccionado un municipio
+  if (!municipio || municipio === "—") {
+    return alert("Por favor selecciona un municipio de la lista antes de guardar.");
+  }
+
   const registro = {
     anio: anioReporteEl.value,
-    municipio: municipioSeleccionadoEl.textContent.trim(),
+    municipio: municipio,
     poblacion: poblacionEl.value,
     sujeto: sujetoEl.value,
     estrategia: estrategiaEl.value,
@@ -427,7 +446,7 @@ guardarBtn.addEventListener("click", async () => {
     observaciones: observacionesEl.value
   };
 
-  if (!registro.anio || !registro.municipio || !registro.poblacion || !registro.sujeto || !registro.estrategia || !registro.cantidad) {
+  if (!registro.anio || !registro.poblacion || !registro.sujeto || !registro.estrategia || !registro.cantidad) {
     return alert("Por favor completa todos los campos obligatorios.");
   }
 
@@ -465,12 +484,10 @@ function limpiarFormulario() {
 
 /* ---------------------------
    VER CONSOLIDADO -> abre DASHBOARD
-   (úsalo cuando formulario esté completo)
 ----------------------------*/
 btnConsolidado.addEventListener("click", () => {
   if (!isFormMandatoryComplete()) return alert("Completa los campos obligatorios para ver el consolidado.");
 
-  // hide form view, show dashboard
   formWrap.classList.add("hidden");
   tableWrap.classList.add("hidden");
   totalsContainer.classList.add("hidden");
@@ -480,10 +497,8 @@ btnConsolidado.addEventListener("click", () => {
   dashboard.classList.remove("hidden");
   dashboardBtn.classList.remove("hidden");
 
-  // ✅ AGREGAR: Quitar with-sidebar para centrar dashboard
   document.querySelector('.main-area').classList.remove('with-sidebar');
 
-  // apply dashboard filters: set filters to the form values (so charts reflect what user just filled)
   filtroAnioDashboard.value = anioReporteEl.value || "";
   filtroMunicipioDashboard.value = municipioSeleccionadoEl.textContent.trim() || "";
   filtroPoblacionDashboard.value = poblacionEl.value || "";
@@ -522,11 +537,9 @@ function applyDashboardFilters(records) {
    UPDATE DASHBOARD (KPIs + charts + tabla %)
 ----------------------------*/
 function updateDashboard() {
-  // ensure registros are loaded
   const all = registros.slice();
   const filtered = applyDashboardFilters(all);
 
-  // KPI 1: Total Sujeto (según filtro) -> sum cantidad for selected sujeto if any, else total sum of cantidad
   let totalSujeto = 0;
   if (filtroSujetoDashboard.value) {
     totalSujeto = filtered.filter(r => r.sujeto === filtroSujetoDashboard.value).reduce((a,b)=>a+(Number(b.cantidad)||0),0);
@@ -537,24 +550,35 @@ function updateDashboard() {
   }
   kpiValorSujeto.textContent = totalSujeto;
 
-  // KPI 2: Directa (según filtro)
   const directa = filtered.filter(r => r.poblacion === "DIRECTA").reduce((a,b)=>a+(Number(b.cantidad)||0),0);
   kpiDirecta.textContent = directa;
 
-  // KPI 3: Indirecta (según filtro)
   const indirecta = filtered.filter(r => r.poblacion === "INDIRECTA").reduce((a,b)=>a+(Number(b.cantidad)||0),0);
   kpiIndirecta.textContent = indirecta;
 
-  // KPI 4: Total Registros (número de registros que pasan el filtro)
   kpiRegistros.textContent = filtered.length;
 
-  // Charts
   renderChartEstrategias(filtered);
   renderChartPoblacion(filtered);
   renderChartSujetos(filtered);
 
-  // Tabla % por estrategia
   renderTablaPorcentajeEstrategias(filtered);
+  
+  // ✅ NUEVO: Actualizar título de la tabla según filtro de sujeto
+  actualizarTituloTablaEstrategias();
+}
+
+// ✅ NUEVA FUNCIÓN: Actualizar título dinámico de la tabla
+function actualizarTituloTablaEstrategias() {
+  const tituloTabla = document.getElementById('tituloTablaEstrategia');
+  if (tituloTabla) {
+    const sujetoSeleccionado = filtroSujetoDashboard.value;
+    if (sujetoSeleccionado) {
+      tituloTabla.textContent = `% (${sujetoSeleccionado})`;
+    } else {
+      tituloTabla.textContent = `% (porcentaje según filtros)`;
+    }
+  }
 }
 
 /* ---------------------------
@@ -565,14 +589,12 @@ function renderTablaPorcentajeEstrategias(filtered) {
 
   const totalCantidad = filtered.reduce((a,b)=>a+(Number(b.cantidad)||0),0);
 
-  // compute sum per estrategia
   const sums = {};
   filtered.forEach(r => {
     const key = r.estrategia || "Sin estrategia";
     sums[key] = (sums[key] || 0) + (Number(r.cantidad)||0);
   });
 
-  // sort by value desc
   const rows = Object.entries(sums).sort((a,b)=>b[1]-a[1]);
 
   if (rows.length === 0) {
@@ -601,7 +623,6 @@ function renderChartEstrategias(filtered) {
   const labels = Object.keys(sums);
   const data = Object.values(sums);
 
-  // ensure consistent order: descending
   const pairs = labels.map((l,i)=>[l,data[i]]).sort((a,b)=>b[1]-a[1]);
   const sortedLabels = pairs.map(p=>p[0]);
   const sortedData = pairs.map(p=>p[1]);
@@ -621,7 +642,7 @@ function renderChartEstrategias(filtered) {
       }]
     },
     options: {
-      indexAxis: 'y', // horizontal bars
+      indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
       scales: {
@@ -705,14 +726,12 @@ function renderChartSujetos(filtered) {
 ----------------------------*/
 async function initLoad() {
   await cargarRegistros();
-  // ensure dashboard filters are initialized from registros (years list)
   populateFilterYears();
 }
 
 function populateFilterYears() {
   const yearsSet = new Set(registros.map(r=>r.anio).filter(Boolean));
   const arr = Array.from(yearsSet).sort();
-  // rebuild filtroAnioDashboard options
   filtroAnioDashboard.innerHTML = `<option value="">Todos</option>` + arr.map(y=>`<option>${y}</option>`).join("");
 }
 

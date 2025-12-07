@@ -665,10 +665,39 @@ h3{ font-size:larger;
 ===================================================== */
 @media (max-width: 768px) {
   
+  /* ✅ NUEVO: Reducir tamaño del título en móvil */
+  h1 {
+    font-size: 24px !important;
+    line-height: 1.2;
+    padding: 0 10px;
+    margin-top: 10px;
+  }
+  
+  /* ✅ NUEVO: Logo más pequeño en móvil */
+  .logo-svg {
+    height: 50px !important;
+  }
+  
+  /* ✅ NUEVO: Ajustar header en móvil */
+  .topbar {
+    height: auto !important;
+    min-height: 60px;
+  }
+  
+  .topbar-inner {
+    padding: 8px 10px !important;
+  }
+  
+  .brand {
+    flex-direction: column;
+    gap: 8px !important;
+    align-items: center;
+  }
+  
   /* Sidebar fijo en la parte superior */
   #sidebar {
     position: fixed;
-    top: calc(var(--header-h) + var(--subnav-h));
+    top: calc(60px + var(--subnav-h)); /* ✅ Ajustado para header más pequeño */
     left: 0;
     width: 100%;
     height: auto;
@@ -709,7 +738,7 @@ h3{ font-size:larger;
     border: 1px solid #ccc;
   }
   
-  /* Botón hamburguesa para mostrar buscador */
+  /* Botón hamburguesa para mostrar buscador - ✅ CON ÍCONO */
   #hamburgerBtn {
     display: block;
     background: white;
@@ -724,6 +753,8 @@ h3{ font-size:larger;
     width: auto;
     max-width: 200px;
   }
+  
+  /* Resto del código igual... */
   
   /* Contenedor de la lista horizontal */
   #municipioListSidebar {
@@ -818,7 +849,7 @@ h3{ font-size:larger;
   /* Ajustar subnav */
   .subnav {
     position: sticky;
-    top: var(--header-h);
+    top: 60px; /* ✅ Ajustado para header más pequeño */
     z-index: 1500;
   }
   
@@ -827,10 +858,16 @@ h3{ font-size:larger;
     padding-top: 10px !important;
     width: 100%;
   }
+}
 
-  @media (min-width: 769px) {
-    #hamburgerBtn {
-      display: none !important;
-    }
+/* ✅ NUEVO: Ocultar ícono del botón en escritorio */
+@media (min-width: 769px) {
+  #hamburgerBtn {
+    display: none !important;
+  }
+  
+  /* Asegurar tamaño normal del título en escritorio */
+  h1 {
+    font-size: xx-large;
   }
 }

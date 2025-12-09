@@ -1,4 +1,4 @@
-// app2.js - versión completa con dashboard dinámico y navegación
+// app2.js - versión optimizada con carga instantánea y botones Home
 import {
   apiListarRegistros,
   apiGuardarRegistro,
@@ -21,6 +21,8 @@ const reporteBtn = document.getElementById("reporteBtn");
 const dashboardBtn = document.getElementById("dashboardBtn");
 
 const btnVolverFormulario = document.getElementById("btnVolverFormulario");
+const btnHomeNav = document.getElementById("btnHomeNav");
+const btnHomeDashboard = document.getElementById("btnHomeDashboard");
 
 const anioReporteEl = document.getElementById("anioReporte");
 const municipioSeleccionadoEl = document.getElementById("municipioSeleccionado");
@@ -97,6 +99,8 @@ const opcionesDespliegue = {
 
 let registros = [];
 let editId = null;
+let registrosCargados = false;
+let cargaInicial = false; // ⚡ NUEVO: para carga inicial única
 
 /* ---------------------------
    CHARTS (guardamos instancias)
@@ -125,111 +129,131 @@ initUI();
    VISTAS / NAVEGACIÓN
 ----------------------------*/
 function hideAllViews() {
-  inicioPantalla.classList.remove("hidden"); // show inicio
+  inicioPantalla.classList.remove("hidden");
   formWrap.classList.add("hidden");
   tableWrap.classList.add("hidden");
   totalsContainer.classList.add("hidden");
   sidebar.classList.add("hidden");
   subNav.classList.add("hidden");
   dashboard.classList.add("hidden");
+  btnHomeNav.classList.add("hidden");
 
-  // dashboard button hidden on startup
   dashboardBtn.classList.add("hidden");
   document.querySelector('.main-area').classList.remove('with-sidebar');
 }
 
-btnResultados.addEventListener("click", () => {
-  // Show dashboard (from inicio)
+/* ---------------------------
+   ⚡ FUNCIONES HOME BUTTONS
+----------------------------*/
+function volverAInicio() {
+  hideAllViews();
+  inicioPantalla.classList.remove("hidden");
+  
+  // Limpiar selección de municipio
+  municipioSeleccionadoEl.textContent = "—";
+  limpiarFormulario();
+}
+
+// Home desde navegación
+btnHomeNav.addEventListener("click", volverAInicio);
+
+// Home desde dashboard
+btnHomeDashboard.addEventListener("click", volverAInicio);
+
+/* ---------------------------
+   BOTÓN RESULTADOS (CONSOLIDADO)
+----------------------------*/
+btnResultados.addEventListener("click", async () => {
   inicioPantalla.classList.add("hidden");
   dashboard.classList.remove("hidden");
-
-  // hide form & sidebar
   formWrap.classList.add("hidden");
   tableWrap.classList.add("hidden");
   totalsContainer.classList.add("hidden");
   sidebar.classList.add("hidden");
-  subNav.classList.add("hidden");
-
-  dashboardBtn.classList.remove("hidden");
-  
+  subNav.classList.add("hidden"); // ⚡ OCULTAR barra roja
+  btnHomeNav.classList.add("hidden");
+  dashboardBtn.classList.add("hidden"); // ⚡ OCULTAR botón Resultados
   document.querySelector('.main-area').classList.remove('with-sidebar');
   
+  // ⚡ Carga inteligente con promise
+  if (!registrosCargados) {
+    await cargarRegistrosRapido();
+  }
   updateDashboard();
 });
 
-// ✅ MODIFICADO: Mostrar formulario directo al hacer clic en "Reporte de Información"
-btnReporteInfo.addEventListener("click", () => {
+/* ---------------------------
+   BOTÓN REPORTE DE INFORMACIÓN
+----------------------------*/
+btnReporteInfo.addEventListener("click", async () => {
   inicioPantalla.classList.add("hidden");
   dashboard.classList.add("hidden");
-
-  // Mostrar sidebar, formulario y tabla directamente
   sidebar.classList.remove("hidden");
   subNav.classList.remove("hidden");
+  btnHomeNav.classList.remove("hidden"); // ⚡ Mostrar botón Home
   formWrap.classList.remove("hidden");
   tableWrap.classList.remove("hidden");
   totalsContainer.classList.remove("hidden");
-
-  // Agregar clase with-sidebar para que se vea correctamente
   document.querySelector('.main-area').classList.add('with-sidebar');
 
-  // MOBILE FIX: Asegurar que todo sea visible en móvil
+  // MOBILE FIX
   if (window.innerWidth <= 768) {
-    // Remover with-sidebar en móvil
     document.querySelector('.main-area').classList.remove('with-sidebar');
-    
-    // Forzar visibilidad
     formWrap.style.display = 'block';
     tableWrap.style.display = 'block';
     totalsContainer.style.display = 'flex';
-    
-    // Asegurar que el sidebar esté en posición correcta
     sidebar.style.position = 'fixed';
     sidebar.style.top = 'calc(var(--header-h) + var(--subnav-h))';
   }
 
   dashboardBtn.classList.add("hidden");
   
-  // Renderizar tabla con todos los registros (sin filtro de municipio)
+  // ⚡ Carga instantánea
+  if (!registrosCargados) {
+    await cargarRegistrosRapido();
+  }
   renderTabla();
 });
 
 dashboardBtn.addEventListener("click", () => {
-  // from subnav, user wants Dashboard
+  // Ocultar todo
   formWrap.classList.add("hidden");
   tableWrap.classList.add("hidden");
   totalsContainer.classList.add("hidden");
   sidebar.classList.add("hidden");
+  btnHomeNav.classList.add("hidden");
+  subNav.classList.add("hidden"); // ⚡ OCULTAR barra roja
 
+  // Mostrar dashboard
   dashboard.classList.remove("hidden");
-  dashboardBtn.classList.remove("hidden");
+  dashboardBtn.classList.add("hidden"); // ⚡ Ocultar el botón mismo
   
   document.querySelector('.main-area').classList.remove('with-sidebar');
   
   updateDashboard();
 });
 
-// ✅ MODIFICADO: Volver al formulario con todo visible
 btnVolverFormulario.addEventListener("click", () => {
+  // Ocultar dashboard
   dashboard.classList.add("hidden");
   
-  // Mostrar todo: sidebar, formulario y tabla
-  subNav.classList.remove("hidden");
+  // Mostrar formulario y tabla
+  subNav.classList.remove("hidden"); // ⚡ Mostrar barra roja de nuevo
   sidebar.classList.remove("hidden");
+  btnHomeNav.classList.remove("hidden");
   formWrap.classList.remove("hidden");
   tableWrap.classList.remove("hidden");
   totalsContainer.classList.remove("hidden");
 
-  dashboardBtn.classList.add("hidden");
+  dashboardBtn.classList.add("hidden"); // ⚡ Mantener oculto en la barra
   
   document.querySelector('.main-area').classList.add('with-sidebar');
   
-  // Renderizar tabla con el filtro actual (si hay municipio seleccionado)
   renderTabla();
 });
 
 /* ---------------------------
    SIDEBAR -> seleccionar municipio
-   (la barra queda fija; NO la ocultamos al seleccionar)
 ----------------------------*/
 municipioListSidebar.addEventListener("click", e => {
   if (e.target.tagName === "LI") {
@@ -242,14 +266,12 @@ function seleccionarMunicipio(nombre) {
   editId = null;
   cancelarEdicionBtn.classList.add("hidden");
 
-  // show form & table (sidebar stays visible)
   formWrap.classList.remove("hidden");
   tableWrap.classList.remove("hidden");
   totalsContainer.classList.remove("hidden");
   
   document.querySelector('.main-area').classList.add('with-sidebar');
 
-  // render tabla con filtrado por municipio seleccionado
   renderTabla();
 }
 
@@ -306,10 +328,8 @@ anioReporteEl.addEventListener("change", validateFormForConsolidado);
 cantidadEl.addEventListener("input", validateFormForConsolidado);
 
 function isFormMandatoryComplete() {
-  // Permitir ver consolidado si ya existe al menos un registro
   if (registros.length > 0) return true;
 
-  // Si no hay registros, validar el formulario
   const anio = anioReporteEl.value;
   const muni = municipioSeleccionadoEl.textContent.trim();
   const poblacion = poblacionEl.value;
@@ -321,18 +341,43 @@ function isFormMandatoryComplete() {
 }
 
 function validateFormForConsolidado() {
-  if (isFormMandatoryComplete()) btnConsolidado.removeAttribute("disabled");
-  else btnConsolidado.setAttribute("disabled", "true");
+  // Habilitar si hay registros O si el formulario está completo
+  const hayRegistros = registros.length > 0;
+  const formularioCompleto = anioReporteEl.value && 
+                              municipioSeleccionadoEl.textContent !== "—" && 
+                              poblacionEl.value && 
+                              sujetoEl.value && 
+                              estrategiaEl.value && 
+                              Number(cantidadEl.value) > 0;
+  
+  if (hayRegistros || formularioCompleto) {
+    btnConsolidado.removeAttribute("disabled");
+  } else {
+    btnConsolidado.setAttribute("disabled", "true");
+  }
 }
 
 /* ---------------------------
-   CRUD & TABLA
+   ⚡ CARGA OPTIMIZADA DE REGISTROS
 ----------------------------*/
-async function cargarRegistros() {
-  const res = await apiListarRegistros();
-  registros = Array.isArray(res) ? res : [];
-  renderTabla();
-  updateDashboard();
+async function cargarRegistrosRapido() {
+  if (registrosCargados && registros.length > 0) {
+    console.log("✅ Usando caché de registros");
+    return;
+  }
+
+  try {
+    const res = await apiListarRegistros();
+    registros = Array.isArray(res) ? res : [];
+    registrosCargados = true;
+    console.log(`✅ ${registros.length} registros cargados`);
+    
+    // Actualizar estado del botón consolidado
+    validateFormForConsolidado();
+  } catch (error) {
+    console.error("❌ Error cargando registros:", error);
+    registros = [];
+  }
 }
 
 function renderTabla() {
@@ -341,7 +386,6 @@ function renderTabla() {
   const muni = municipioSeleccionadoEl.textContent.trim();
   let filtrados = [];
 
-  // if no municipio selected or placeholder, show all records
   if (!muni || muni === "—") filtrados = registros.slice();
   else filtrados = registros.filter(r => r.municipio === muni);
 
@@ -369,6 +413,9 @@ function renderTabla() {
   tablaBody.querySelectorAll(".btn-delete").forEach(b => b.addEventListener("click", onEliminar));
 
   actualizarTotales(filtrados);
+  
+  // Actualizar estado del botón consolidado
+  validateFormForConsolidado();
 }
 
 function actualizarTotales(filtrados) {
@@ -423,14 +470,16 @@ async function onEliminar(e) {
   if (!confirm("¿Eliminar este registro?")) return;
   const id = e.currentTarget.dataset.id;
   await apiEliminarRegistro(id);
-  await cargarRegistros();
+  
+  registros = registros.filter(r => r._id !== id);
+  renderTabla();
+  updateDashboard();
 }
 
 /* GUARDAR */
 guardarBtn.addEventListener("click", async () => {
   const municipio = municipioSeleccionadoEl.textContent.trim();
   
-  // Validar que se haya seleccionado un municipio
   if (!municipio || municipio === "—") {
     return alert("Por favor selecciona un municipio de la lista antes de guardar.");
   }
@@ -450,19 +499,30 @@ guardarBtn.addEventListener("click", async () => {
     return alert("Por favor completa todos los campos obligatorios.");
   }
 
-  if (editId) {
-    await apiEditarRegistro(editId, registro);
-    editId = null;
-    cancelarEdicionBtn.classList.add("hidden");
-  } else {
-    await apiGuardarRegistro(registro);
+  try {
+    if (editId) {
+      const updated = await apiEditarRegistro(editId, registro);
+      const idx = registros.findIndex(r => r._id === editId);
+      if (idx >= 0) registros[idx] = updated;
+      editId = null;
+      cancelarEdicionBtn.classList.add("hidden");
+    } else {
+      const nuevo = await apiGuardarRegistro(registro);
+      registros.unshift(nuevo);
+    }
+
+    renderTabla();
+    updateDashboard();
+    limpiarFormulario();
+    
+    // Habilitar botón consolidado después de guardar
+    validateFormForConsolidado();
+    alert("Registro guardado exitosamente");
+  } catch (error) {
+    console.error("Error al guardar:", error);
+    alert("Error al guardar el registro");
   }
-
-  await cargarRegistros();
-  limpiarFormulario();
 });
-
-btnConsolidado.removeAttribute("disabled");
 
 cancelarEdicionBtn.addEventListener("click", () => {
   editId = null;
@@ -485,26 +545,54 @@ function limpiarFormulario() {
 /* ---------------------------
    VER CONSOLIDADO -> abre DASHBOARD
 ----------------------------*/
-btnConsolidado.addEventListener("click", () => {
-  if (!isFormMandatoryComplete()) return alert("Completa los campos obligatorios para ver el consolidado.");
+btnConsolidado.addEventListener("click", async () => {
+  console.log("🟢 Clic en Ver Consolidado");
+  console.log("📊 Registros cargados:", registrosCargados);
+  console.log("📊 Total registros:", registros.length);
+  
+  // Verificar si hay registros cargados
+  if (!registrosCargados) {
+    console.log("⏳ Cargando registros antes de mostrar dashboard...");
+    await cargarRegistrosRapido();
+  }
+  
+  if (registros.length === 0) {
+    console.log("❌ No hay registros");
+    return alert("No hay registros para mostrar en el consolidado.");
+  }
 
+  console.log("✅ Mostrando dashboard con", registros.length, "registros");
+
+  // Ocultar vistas de formulario
   formWrap.classList.add("hidden");
   tableWrap.classList.add("hidden");
   totalsContainer.classList.add("hidden");
   sidebar.classList.add("hidden");
-  subNav.classList.add("hidden");
+  subNav.classList.add("hidden"); // ⚡ OCULTAR barra roja
+  btnHomeNav.classList.add("hidden");
 
+  // Mostrar dashboard
   dashboard.classList.remove("hidden");
-  dashboardBtn.classList.remove("hidden");
+  dashboardBtn.classList.add("hidden"); // ⚡ OCULTAR botón Resultados en barra
 
   document.querySelector('.main-area').classList.remove('with-sidebar');
 
-  filtroAnioDashboard.value = anioReporteEl.value || "";
-  filtroMunicipioDashboard.value = municipioSeleccionadoEl.textContent.trim() || "";
-  filtroPoblacionDashboard.value = poblacionEl.value || "";
-  filtroSujetoDashboard.value = sujetoEl.value || "";
+  // Aplicar filtros del formulario si están disponibles
+  const anioForm = anioReporteEl.value;
+  const muniForm = municipioSeleccionadoEl.textContent.trim();
+  const pobForm = poblacionEl.value;
+  const sujForm = sujetoEl.value;
 
+  console.log("🔍 Aplicando filtros:", { anioForm, muniForm, pobForm, sujForm });
+
+  if (anioForm) filtroAnioDashboard.value = anioForm;
+  if (muniForm && muniForm !== "—") filtroMunicipioDashboard.value = muniForm;
+  if (pobForm) filtroPoblacionDashboard.value = pobForm;
+  if (sujForm) filtroSujetoDashboard.value = sujForm;
+
+  // Actualizar dashboard
   updateDashboard();
+  console.log("✅ Dashboard actualizado");
 });
 
 /* ---------------------------
@@ -563,12 +651,9 @@ function updateDashboard() {
   renderChartSujetos(filtered);
 
   renderTablaPorcentajeEstrategias(filtered);
-  
-  // ✅ NUEVO: Actualizar título de la tabla según filtro de sujeto
   actualizarTituloTablaEstrategias();
 }
 
-// ✅ NUEVA FUNCIÓN: Actualizar título dinámico de la tabla
 function actualizarTituloTablaEstrategias() {
   const tituloTabla = document.getElementById('tituloTablaEstrategia');
   if (tituloTabla) {
@@ -725,8 +810,11 @@ function renderChartSujetos(filtered) {
    CARGA INICIAL
 ----------------------------*/
 async function initLoad() {
-  await cargarRegistros();
-  populateFilterYears();
+  // ⚡ Carga en background sin bloquear UI
+  cargarRegistrosRapido().then(() => {
+    populateFilterYears();
+    console.log("✅ Sistema listo");
+  });
 }
 
 function populateFilterYears() {
@@ -738,15 +826,13 @@ function populateFilterYears() {
 document.addEventListener("DOMContentLoaded", initLoad);
 
 /* =====================================================
-   HAMBURGUESA – MOBILE MENU (MEJORADO)
+   HAMBURGUESA – MOBILE MENU
 ===================================================== */
-
 const hamburgerBtn = document.getElementById("hamburgerBtn");
 const listaSidebar = document.getElementById("municipioListSidebar");
 const buscadorSidebar = document.getElementById("searchMunicipioSidebar");
 
 if (hamburgerBtn) {
-  // Inicializar texto del botón
   hamburgerBtn.textContent = "🔍 Buscar";
   
   hamburgerBtn.addEventListener("click", () => {

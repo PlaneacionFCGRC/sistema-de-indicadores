@@ -1,5 +1,5 @@
 /* ============================================================
-   style2.css - Versión Optimizada PRO+
+   style2.css - Versión Optimizada PRO+ con Home Buttons
    ============================================================ */
 
 :root {
@@ -20,10 +20,9 @@
 /* RESET */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { 
-  overflow-x: auto;   /* permite scroll horizontal */
-  overflow-y: auto;   /* mantiene scroll vertical normal */
+  overflow-x: auto;
+  overflow-y: auto;
   height: 100%; 
-
 }
 body {
   font-family: var(--inter);
@@ -65,14 +64,28 @@ body {
   color: var(--rojo);
   justify-content: center;
 }
-/* SUBNAV */
+
+/* =====================================================
+   SUBNAV CON BOTÓN HOME
+===================================================== */
 .subnav {
   background: linear-gradient(180deg, var(--rojo), var(--rojo-2));
   padding: 10px 20px;
   position: sticky;
   top: var(--header-h);
   z-index: 1600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
 }
+
+.subnav-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .subnav-item {
   background: transparent;
   color: var(--blanco);
@@ -81,6 +94,62 @@ body {
   font-size: 17px;
   border-radius: 4px;
   cursor: pointer;
+  border: none;
+}
+
+/* ⚡ BOTÓN HOME EN NAVEGACIÓN */
+.btn-home-nav {
+  background: var(--rojo);
+  color: white;
+  border: 2px solid white;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+  margin-left: auto;
+}
+
+.btn-home-nav:hover {
+  background: white;
+  color: var(--rojo);
+  transform: translateY(-2px);
+}
+
+.btn-home-nav .home-icon {
+  font-size: 18px;
+}
+
+/* ⚡ BOTÓN HOME EN DASHBOARD */
+.btn-home-dashboard {
+  background: var(--rojo);
+  color: white;
+  border: 2px solid var(--rojo);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+.btn-home-dashboard:hover {
+  background: var(--rojo-2);
+  border-color: var(--rojo-2);
+  transform: translateY(-2px);
+}
+
+.btn-home-dashboard .home-icon {
+  font-size: 18px;
 }
 
 /* MAIN */
@@ -149,7 +218,6 @@ body {
   font-weight: 800;
 }
 .DIRECTAS {
-
   font-size: 20px;
   font-weight: 800;
 }
@@ -211,8 +279,8 @@ body {
   gap: 18px;
   min-width: 0;
   width: 100%;
-  margin: 0 auto;         /* ✅ Centrado en el espacio disponible */
-  padding: 0 20px;        /* ✅ Respiro en los lados */
+  margin: 0 auto;
+  padding: 0 20px;
 }
 .selected-title {
   font-size: 20px;
@@ -232,19 +300,18 @@ body {
   justify-content: center;
 }
 
-
-
 /* CARDS */
-.card { background: #fff; 
+.card { 
+  background: #fff; 
   padding: 18px; 
   border-radius: 10px; 
-  box-shadow: var(--card-shadow); }
+  box-shadow: var(--card-shadow); 
+}
 .card-form {
   width: 100%;
   margin: 0 auto;
   padding: 24px;
 }
-
 
 /* UNIFICACIÓN FINAL card-total */
 .card-total {
@@ -302,7 +369,6 @@ body {
 }
 
 /* TABLE */
-
 .tabla-registros {
   width: 100%;
   border-collapse: collapse;
@@ -372,12 +438,16 @@ body {
 .btn-edit {
   background: #777 !important;
   color: white !important;
-  padding: 6px 12px; border-radius: 6px; border: none;
+  padding: 6px 12px; 
+  border-radius: 6px; 
+  border: none;
 }
 .btn-delete {
   background: #c40000 !important;
   color: white !important;
-  padding: 6px 12px; border-radius: 6px; border: none;
+  padding: 6px 12px; 
+  border-radius: 6px; 
+  border: none;
 }
 
 /* RESPONSIVE */
@@ -401,7 +471,8 @@ body {
 @media (max-width:760px){
   #anio { width: 90%; }
   .tabla-registros { 
-    min-width: 700px; }
+    min-width: 700px; 
+  }
 }
 
 /* UTILIDADES */
@@ -413,8 +484,6 @@ body {
 .chart-box canvas {
   max-height: 260px !important;
 }
-/* === CORRECCIÓN: TARJETAS DE TOTALES VERTICALES === */
-
 
 /* === TARJETAS HORIZONTALES === */
 #totalsContainer {
@@ -427,11 +496,9 @@ body {
   width: 100%;
 }
 
-/* Todas mismo tamaño */
-
 .small-card {
   flex: 1;
-  min-width: 180px;       /* ✅ Más flexible */
+  min-width: 180px;
   max-width: 250px;
   background: white;
   border: 3px solid #8B0000;
@@ -441,6 +508,7 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+
 /* Contenedor del tooltip */
 .tooltip {
   position: relative;
@@ -459,7 +527,7 @@ body {
   font-size: 13px;
 
   position: absolute;
-  bottom: 110%; /* aparece arriba de la tarjeta */
+  bottom: 110%;
   left: 50%;
   transform: translateX(-50%);
 
@@ -485,27 +553,34 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
 body {
     overflow-x: hidden;
 }
-/* === BOTONES DE INICIO (GRANDES, ROJOS, ELEGANTES) === */
 
+/* === BOTONES DE INICIO (GRANDES, ROJOS, ELEGANTES) === */
 .inicio-container {
-  display: 50px;
-  gap: 40px;
+  display: flex;
   justify-content: center;
-  margin-top: 50px;
+  align-items: stretch;
+  gap: 40px;
+  margin: 50px auto;
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 40px;
 }
 
 .inicio-card {
   padding: 45px;
   border-radius: 18px;
   box-shadow: var(--card-shadow);
-  width: 480px;
-  height: 260px;
-  display: 60px;
+  flex: 1;
+  max-width: 420px;
+  min-width: 320px;
+  display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .inicio-btn {
@@ -518,34 +593,39 @@ body {
   border: 3px solid var(--rojo);
   border-radius: 14px;
   cursor: pointer;
-  justify-content: center;
+  text-align: center;
   transition: 0.25s ease;
+  box-sizing: border-box;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .inicio-btn:hover {
   background: var(--rojo);
   color: #fff;
   transform: translateY(-3px);
-  justify-content: center;
 }
-/* === AGRANDAR Y CENTRAR GRÁFICOS DE MANERA AUTORRESPONSIVA === */
 
+/* === AGRANDAR Y CENTRAR GRÁFICOS DE MANERA AUTORRESPONSIVA === */
 .chart-responsive {
   flex: 1 1 100%;
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;      /* ✔ Centra el contenido */
+  align-items: center;
   justify-content: center;
   padding: 16px;
 }
 
 .chart-responsive canvas {
-  width: 100% !important;   /* ✔ Se adapta al zoom */
-  max-width: 600px;         /* ✔ Tamaño óptimo centrado */
-  height: auto !important;  /* ✔ Evita estiramiento extraño */
+  width: 100% !important;
+  max-width: 600px;
+  height: auto !important;
   margin: 0 auto;
 }
+
 /* === TOOLTIP PARA TÍTULO GRI === */
 .tooltip-gri {
     position: relative;
@@ -553,7 +633,6 @@ body {
     cursor: help;
 }
 
-/* Caja del tooltip */
 .tooltip-gri-text {
     visibility: hidden;
     opacity: 0;
@@ -566,7 +645,6 @@ body {
     font-size: 14px;
     line-height: 1.4;
 
-    /* posición */
     position: absolute;
     bottom: -10px;
     left: 50%;
@@ -577,7 +655,6 @@ body {
     pointer-events: none;
 }
 
-/* Flechita */
 .tooltip-gri-text::after {
     content: "";
     position: absolute;
@@ -589,67 +666,24 @@ body {
     border-color: transparent transparent #700 transparent;
 }
 
-/* Mostrar tooltip al pasar el mouse */
 .tooltip-gri:hover .tooltip-gri-text,
 .tooltip-gri:active .tooltip-gri-text {
     visibility: visible;
     opacity: 1;
 }
-h1{ font-size:xx-large;
-    text-align: center;
-    color:#B40000
-}
-h3{ font-size:larger;
-    text-align: left;
-    color:#B40000
-}
-/* =====================================================
-   1) BOTONES DE INICIO – CENTRADOS Y RESPONSIVE
-===================================================== */
 
-.inicio-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 40px;
-  margin: 50px auto;           /* ✅ Auto centra el contenedor */
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 1200px;           /* ✅ Limita el ancho total */
-  padding: 0 40px;
+h1{ 
+  font-size: xx-large;
+  text-align: center;
+  color: #B40000;
 }
 
-.inicio-card {
-  padding: 45px;
-  border-radius: 18px;
-  box-shadow: var(--card-shadow);
-  width: 420px;             /* ✅ Mismo ancho para ambos */
-  max-width: 420px;         /* ✅ Mismo ancho máximo */
-  min-width: 380px;         /* ✅ Mismo ancho mínimo */
-  display: flex;
-  justify-content: center;
-
+h3{ 
+  font-size: larger;
+  text-align: left;
+  color: #B40000;
 }
 
-.inicio-btn {
-  width: 100%;
-  padding: 28px 40px;
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--rojo);
-  background: #fff;
-  border: 3px solid var(--rojo);  /* ✅ Mismo grosor de borde */
-  border-radius: 14px;
-  cursor: pointer;
-  text-align: center;              /* ✅ Texto centrado */
-  transition: 0.25s ease;
-  box-sizing: border-box; 
-}
-.inicio-btn:hover {
-  background: var(--rojo);
-  color: #fff;
-  transform: translateY(-3px);
-}
 #tituloTablaEstrategia {
   font-size: larger;
   text-align: center;
@@ -657,15 +691,12 @@ h3{ font-size:larger;
   margin-bottom: 10px;
 }
 
-/* ... todo tu CSS existente ... */
-
-
 /* =====================================================
    SIDEBAR MÓVIL - LISTA HORIZONTAL MEJORADA
 ===================================================== */
 @media (max-width: 768px) {
   
-  /* ✅ NUEVO: Reducir tamaño del título en móvil */
+  /* ✅ Reducir tamaño del título en móvil */
   h1 {
     font-size: 24px !important;
     line-height: 1.2;
@@ -673,12 +704,12 @@ h3{ font-size:larger;
     margin-top: 10px;
   }
   
-  /* ✅ NUEVO: Logo más pequeño en móvil */
+  /* ✅ Logo más pequeño en móvil */
   .logo-svg {
     height: 50px !important;
   }
   
-  /* ✅ NUEVO: Ajustar header en móvil */
+  /* ✅ Ajustar header en móvil */
   .topbar {
     height: auto !important;
     min-height: 60px;
@@ -693,11 +724,39 @@ h3{ font-size:larger;
     gap: 8px !important;
     align-items: center;
   }
+
+  /* ⚡ AJUSTAR SUBNAV EN MÓVIL */
+  .subnav {
+    flex-direction: column;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .subnav-left {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-home-nav {
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  /* ⚡ BOTÓN HOME DASHBOARD EN MÓVIL */
+  .btn-home-dashboard {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+
+  .btn-save {
+    width: 100%;
+  }
   
   /* Sidebar fijo en la parte superior */
   #sidebar {
     position: fixed;
-    top: calc(60px + var(--subnav-h)); /* ✅ Ajustado para header más pequeño */
+    top: calc(60px + var(--subnav-h));
     left: 0;
     width: 100%;
     height: auto;
@@ -717,7 +776,6 @@ h3{ font-size:larger;
     pointer-events: all !important;
   }
   
-  /* Título del sidebar */
   .municipio-title {
     display: block;
     text-align: center;
@@ -728,7 +786,6 @@ h3{ font-size:larger;
     padding: 0 10px;
   }
   
-  /* Buscador oculto por defecto */
   #searchMunicipioSidebar {
     display: none;
     width: 90%;
@@ -738,7 +795,6 @@ h3{ font-size:larger;
     border: 1px solid #ccc;
   }
   
-  /* Botón hamburguesa para mostrar buscador - ✅ CON ÍCONO */
   #hamburgerBtn {
     display: block;
     background: white;
@@ -754,9 +810,6 @@ h3{ font-size:larger;
     max-width: 200px;
   }
   
-  /* Resto del código igual... */
-  
-  /* Contenedor de la lista horizontal */
   #municipioListSidebar {
     display: flex !important;
     flex-direction: row;
@@ -771,7 +824,6 @@ h3{ font-size:larger;
     width: 100%;
   }
   
-  /* Cada municipio como botón */
   #municipioListSidebar li {
     flex: 0 0 auto;
     padding: 10px 18px;
@@ -792,7 +844,6 @@ h3{ font-size:larger;
     transform: scale(0.95);
   }
   
-  /* Scrollbar personalizada */
   #municipioListSidebar::-webkit-scrollbar {
     height: 4px;
   }
@@ -806,7 +857,6 @@ h3{ font-size:larger;
     border-radius: 10px;
   }
   
-  /* Ajustar main-area para que empiece debajo del sidebar */
   .main-area {
     margin-top: 70px !important;
     margin-left: 0 !important;
@@ -819,7 +869,6 @@ h3{ font-size:larger;
     width: 100% !important;
   }
   
-  /* Asegurar que el contenido sea visible */
   #formWrap,
   #tableWrap,
   #totalsContainer {
@@ -834,39 +883,34 @@ h3{ font-size:larger;
     gap: 12px !important;
   }
   
-  /* Ajustar tarjetas de totales */
   .small-card {
     max-width: 100% !important;
     min-width: 100% !important;
   }
   
-  /* Ajustar formulario */
   .card-form {
     padding: 16px !important;
     margin-top: 10px !important;
   }
   
-  /* Ajustar subnav */
   .subnav {
     position: sticky;
-    top: 60px; /* ✅ Ajustado para header más pequeño */
+    top: 60px;
     z-index: 1500;
   }
   
-  /* Contenido visible */
   .content {
     padding-top: 10px !important;
     width: 100%;
   }
 }
 
-/* ✅ NUEVO: Ocultar ícono del botón en escritorio */
+/* ✅ Ocultar ícono del botón en escritorio */
 @media (min-width: 769px) {
   #hamburgerBtn {
     display: none !important;
   }
   
-  /* Asegurar tamaño normal del título en escritorio */
   h1 {
     font-size: xx-large;
   }

@@ -13,13 +13,13 @@
 </head>
 
 <body class="inicio-activo">
+  
 
-<!-- SIDEBAR -->
 <!-- SIDEBAR -->
 <div id="sidebar" class="sidebar hidden" aria-hidden="true">
 
   <!-- Botón hamburguesa (solo móvil) -->
-  <button id="hamburgerBtn">☰ Menú</button>
+  <button id="hamburgerBtn">🔍 Buscar</button>
 
   <label class="municipio-title"></label>
 
@@ -49,8 +49,14 @@
 
 <!-- SUBNAV -->
 <nav id="subNav" class="subnav hidden">
-  <div id="reporteBtn" class="subnav-item">Seleccione Municipio</div>
-  <button id="dashboardBtn" class="subnav-item">Resultados</button>
+  <div class="subnav-left">
+    <div id="reporteBtn" class="subnav-item">Seleccione Municipio</div>
+    <button id="dashboardBtn" class="subnav-item">Resultados</button>
+  </div>
+  <button id="btnHomeNav" class="btn-home-nav hidden">
+    <span class="home-icon">🏠</span>
+    <span>Home</span>
+  </button>
 </nav>
 
 <!-- MAIN -->
@@ -73,10 +79,14 @@
     <!-- DASHBOARD -->
     <div id="dashboard" class="dashboard hidden">
 
-      <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
         <h2 class="GeneralDash">Resultados</h2>
-        <div>
-          <button id="btnVolverFormulario" class="btn-save" style="margin-right:8px">Volver al formulario</button>
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:stretch;">
+          <button id="btnHomeDashboard" class="btn-home-dashboard">
+            <span class="home-icon">🏠</span>
+            <span>Home</span>
+          </button>
+          <button id="btnVolverFormulario" class="btn-save">Volver al formulario</button>
         </div>
       </div>
 

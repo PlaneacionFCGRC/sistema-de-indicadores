@@ -1,6 +1,6 @@
 //  app_api2.js  (VERSIÓN ULTRA-RÁPIDA CON CACHE)
-//  ✅ Carga INSTANTÁNEA desde localStorage
-//  ✅ Sincroniza con backend en segundo plano
+//  Carga INSTANTÁNEA desde localStorage
+//  Sincroniza con backend en segundo plano
 
 const API_URL = "https://sistema-de-indicadores.onrender.com/api/indicadores";
 const LS_KEY = "indicadores_local";
@@ -21,7 +21,7 @@ async function fetchWithCache() {
   const timestamp = localStorage.getItem(LS_TIMESTAMP_KEY);
   const now = Date.now();
 
-  // ✅ RETORNO INMEDIATO si hay cache
+  // RETORNO INMEDIATO si hay cache
   if (cached) {
     const cachedData = JSON.parse(cached).map(normalizeRecord);
     
@@ -145,9 +145,7 @@ async function safeFetch(endpoint = "", method = "GET", body = null) {
   }
 }
 
-// -----------------------------------------------------
 // EXPORTS
-// -----------------------------------------------------
 export async function apiListarRegistros() {
   return await fetchWithCache();
 }
